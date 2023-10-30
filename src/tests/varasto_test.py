@@ -71,7 +71,7 @@ class TestVarasto(unittest.TestCase):
         self.assertAlmostEqual(self.varasto.ota_varastosta(10), 7)
 
     def test_printtaus(self):
-        expected_output = f"saldo = {self.varasto.saldo}, vielä tilaa {self.varasto.paljonko_mahtuu()}"
+        expected_output = f"saldo = {self.varasto.saldo}, vielä tilaa {self.varasto.paljonko_mahtuu()}\n"
         with patch('sys.stdout', new=StringIO()) as fake_output:
             print(self.varasto)
             self.assertEqual(fake_output.getvalue(), expected_output)
