@@ -1,5 +1,7 @@
 import unittest
 from varasto import Varasto
+from io import StringIO
+from unittest.mock import patch
 
 
 class TestVarasto(unittest.TestCase):
@@ -38,3 +40,39 @@ class TestVarasto(unittest.TestCase):
 
         # varastossa pitäisi olla tilaa 10 - 8 + 2 eli 4
         self.assertAlmostEqual(self.varasto.paljonko_mahtuu(), 4)
+
+    def test_virheellinen_tilavuus(self): 
+        self.varasto = Varasto(-2)
+        self.assertAlmostEqual(self.varasto.tilavuus, 0)
+
+    def test_virheellinen_saldo(self):
+        self.varasto = Varasto(10, -2)
+        self.assertAlmostEqual(self.varasto.saldo, 0)
+
+    def test_virheellinen_lisays_epaonnistuu(self):
+        self.varasto.lisaa_varastoon(-3)
+        self.assertAlmostEqual(self.varasto.saldo, 0)
+
+    def test_oikea_lisays_onnistuu(self):
+        self.varasto.saldo = 4
+
+        self.varasto.lisaa_varastoon(3)
+        self.assertAlmostEqual(self.varasto.saldo, 7)
+
+    def test_saldo_on_rajoitettu_tilavuuteen(self):
+        self.varasto.lisaa_varastoon(12)
+        self.assertAlmostEqual(self.varasto.saldo, self.varasto.tilavuus)
+
+    def test_ota_varastosta_negatiivinen(self):
+        self.assertAlmostEqual(self.varasto.ota_varastosta(-2), 0)
+
+    def test_palauta_saldo(self):
+        self.varasto.saldo = 7
+        self.assertAlmostEqual(self.varasto.ota_varastosta(10), 7)
+
+    def test_printtaus(self):
+        expected_output = f"saldo = {self.varasto.saldo}, vielä tilaa {self.varasto.paljonko_mahtuu()}\n"
+        with patch('sys.stdout', new=StringIO()) as fake_output:
+            print(self.varasto)
+            self.assertEqual(fake_output.getvalue(), expected_output)
+
