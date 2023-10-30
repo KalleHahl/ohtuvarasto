@@ -1,5 +1,0 @@
-moi taas kaikille
-
-lisää muutoksia
-harjoitellaan git add -p
-
